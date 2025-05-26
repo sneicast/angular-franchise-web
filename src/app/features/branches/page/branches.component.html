@@ -1,1 +1,124 @@
-<p>branches works!</p>
+<div class="flex justify-end p-4">
+  <button
+    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+    (click)="openCreateModal()"
+  >
+    + Agregar Sucursal
+  </button>
+</div>
+
+<!-- Modal de creación -->
+<div *ngIf="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+    <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" (click)="closeCreateModal()">✕</button>
+    <h2 class="text-xl font-bold mb-4">Agregar Sucursal</h2>
+    <form (ngSubmit)="addBranch()" #branchForm="ngForm">
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Nombre</label>
+        <input
+          type="text"
+          class="w-full border border-gray-300 rounded px-3 py-2"
+          name="name"
+          [(ngModel)]="createDto.name"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Estado</label>
+        <select
+          class="w-full border border-gray-300 rounded px-3 py-2"
+          name="status"
+          [(ngModel)]="createDto.status"
+          required
+        >
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Franquicia</label>
+        <select
+          class="w-full border border-gray-300 rounded px-3 py-2"
+          name="franchiseId"
+          [(ngModel)]="createDto.franchiseId"
+          required
+        >
+          <option *ngFor="let f of franchises" [ngValue]="f.id">{{ f.name }}</option>
+        </select>
+      </div>
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          [disabled]="branchForm.invalid"
+        >
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de edición -->
+<div *ngIf="showEditModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+    <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" (click)="closeEditModal()">✕</button>
+    <h2 class="text-xl font-bold mb-4">Editar Sucursal</h2>
+    <p class="mb-2 text-gray-600">ID: <span class="font-semibold">{{ selectedBranch?.id }}</span></p>
+    <p class="mb-4 text-gray-600">Franquicia: <span class="font-semibold">{{ selectedBranch?.franchise?.name }}</span></p>
+    <form (ngSubmit)="updateBranch()" #editBranchForm="ngForm">
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Nombre</label>
+        <input
+          type="text"
+          class="w-full border border-gray-300 rounded px-3 py-2"
+          name="editName"
+          [(ngModel)]="editDto.name"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Estado</label>
+        <select
+          class="w-full border border-gray-300 rounded px-3 py-2"
+          name="editStatus"
+          [(ngModel)]="editDto.status"
+          required
+        >
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          [disabled]="editBranchForm.invalid"
+        >
+          Actualizar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="branch-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4">
+  @for (branch of branches; track branch.id) {
+    <div
+      class="bg-white rounded-xl shadow-md p-6 flex flex-col gap-2 border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer"
+      (click)="openEditModal(branch)"
+    >
+      <p class="text-gray-500 text-sm"><strong>ID:</strong> {{ branch.id }}</p>
+      <h3 class="text-lg font-semibold text-blue-700">{{ branch.name }}</h3>
+      <p class="text-gray-500 text-sm">
+        <strong>Status:</strong>
+        <span [ngClass]="branch.status ? 'text-green-600' : 'text-red-600'">
+          {{ branch.status ? 'Activo' : 'Inactivo' }}
+        </span>
+      </p>
+      <p class="text-gray-400 text-xs mt-auto">
+        <strong>Franquicia:</strong> {{ branch.franchise?.name }}
+      </p>
+    </div>
+  }
+</div>
