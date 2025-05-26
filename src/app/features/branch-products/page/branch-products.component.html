@@ -1,0 +1,118 @@
+<div class="p-4">
+    <label class="block text-gray-700 mb-2">Selecciona una sucursal:</label>
+    <select class="w-full border border-gray-300 rounded px-3 py-2 mb-6" [(ngModel)]="selectedBranchId"
+        (change)="onBranchChange()" name="branchSelect" required>
+        <option [ngValue]="null" disabled selected>-- Selecciona --</option>
+        <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.name }}</option>
+    </select>
+
+    <div class="flex justify-end mb-4" *ngIf="selectedBranchId">
+        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            (click)="openCreateModal()">
+            + Agregar Producto a Sucursal
+        </button>
+    </div>
+
+    <!-- Modal de creación -->
+    <div *ngIf="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                (click)="closeCreateModal()">✕</button>
+            <h2 class="text-xl font-bold mb-4">Agregar Producto a Sucursal</h2>
+            <form (ngSubmit)="addBranchProduct()" #branchProductForm="ngForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Producto</label>
+                    <select class="w-full border border-gray-300 rounded px-3 py-2" name="productId"
+                        [(ngModel)]="createDto.productId" required>
+                        <option [ngValue]="null" disabled selected>-- Selecciona --</option>
+                        <option *ngFor="let p of products" [ngValue]="p.id">{{ p.name }}</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Precio</label>
+                    <input type="number" class="w-full border border-gray-300 rounded px-3 py-2" name="price"
+                        [(ngModel)]="createDto.price" required min="0" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Stock</label>
+                    <input type="number" class="w-full border border-gray-300 rounded px-3 py-2" name="stock"
+                        [(ngModel)]="createDto.stock" required min="0" />
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        [disabled]="branchProductForm.invalid">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div *ngIf="showEditModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                (click)="closeEditModal()">✕</button>
+            <h2 class="text-xl font-bold mb-4">Editar Producto de Sucursal</h2>
+            <form (ngSubmit)="updateBranchProduct()" #editBranchProductForm="ngForm">
+                <div class="mb-2">
+                    <label class="block text-gray-700 mb-1">ID Producto</label>
+                    <input class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100"
+                        [value]="editDto.productId" disabled />
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 mb-1">Producto</label>
+                    <input class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100"
+                        [value]="editDto.productName" disabled />
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 mb-1">Sucursal</label>
+                    <input class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100"
+                        [value]="editDto.branchName" disabled />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Precio</label>
+                    <input type="number" class="w-full border border-gray-300 rounded px-3 py-2" name="editPrice"
+                        [(ngModel)]="editDto.price" required min="0" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Stock</label>
+                    <input type="number" class="w-full border border-gray-300 rounded px-3 py-2" name="editStock"
+                        [(ngModel)]="editDto.stock" required min="0" />
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        [disabled]="editBranchProductForm.invalid">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div *ngIf="branchProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        @for (bp of branchProducts; track bp.productId) {
+        <div
+            class="bg-white rounded-xl shadow-md p-6 flex flex-col gap-2 border border-gray-200 hover:shadow-lg transition-shadow">
+            <p class="text-gray-500 text-sm"><strong>ID Producto:</strong> {{ bp.productId }}</p>
+            <h3 class="text-lg font-semibold text-blue-700">{{ bp.productName }}</h3>
+            <p class="text-gray-500 text-sm"><strong>Stock:</strong> {{ bp.stock }}</p>
+            <p class="text-gray-500 text-sm"><strong>Precio:</strong> {{ bp.price | currency }}</p>
+            <p class="text-gray-400 text-xs mt-auto"><strong>Sucursal:</strong> {{ bp.branchName }}</p>
+            <div class="flex justify-between mt-4">
+                <button class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+                    (click)="openEditModal(bp)">
+                    Editar
+                </button>
+                <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                    (click)="deleteBranchProduct(bp.branchId, bp.productId)">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+        }
+    </div>
+    <div *ngIf="selectedBranchId && branchProducts.length === 0" class="text-gray-500 mt-6">
+        No hay productos para esta sucursal.
+    </div>
+</div>

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Franchise } from '../models/franchise.model';
 import { FranchiseCreateDto } from '../models/franchise-create.dto';
 import { FranchiseEditDto } from '../models/franchise-edit.dto';
+import { TopStockProduct } from '../models/top-stock-product';
 
 @Injectable({
   providedIn: 'root'
@@ -25,4 +26,8 @@ export class FranchiseService {
   updateFranchise(id: number, franchise: FranchiseEditDto): Observable<Franchise> {
     return this.http.put<Franchise>(`${this.baseUrl}/${id}`, franchise);
   }
+
+  getTopStockProducts(franchiseId: number): Observable<TopStockProduct[]> {
+  return this.http.get<TopStockProduct[]>(`${environment.apiUrl}/api/franchises/${franchiseId}/top-stock-products`);
+}
 }

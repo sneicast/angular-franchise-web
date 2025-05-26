@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FranchiseCreateDto } from '../models/franchise-create.dto';
 import { FranchiseEditDto } from '../models/franchise-edit.dto';
+import { TopStockProduct } from '../models/top-stock-product';
+
 
 @Component({
   selector: 'app-franchises',
@@ -20,6 +22,9 @@ export class FranchisesComponent implements OnInit {
   createDto: FranchiseCreateDto = { name: '' };
   editDto: FranchiseEditDto = { name: '' };
   selectedFranchise: Franchise | null = null;
+
+   selectedFranchiseId: number | null = null;
+  topStockProducts: TopStockProduct[] = [];
 
   constructor(private franchiseService: FranchiseService) {}
 
@@ -70,5 +75,15 @@ export class FranchisesComponent implements OnInit {
     this.showEditModal = false;
     this.selectedFranchise = null;
     this.editDto = { name: '' };
+  }
+
+  onFranchiseChange(): void {
+    if (this.selectedFranchiseId) {
+      this.franchiseService.getTopStockProducts(this.selectedFranchiseId).subscribe(data => {
+        this.topStockProducts = data;
+      });
+    } else {
+      this.topStockProducts = [];
+    }
   }
 }

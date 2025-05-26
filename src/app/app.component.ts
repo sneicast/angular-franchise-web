@@ -20,7 +20,8 @@ export class AppComponent {
   menuItems: MenuItem[] = [
     { id: 'franquicias', label: 'Franquicias', icon: 'fas fa-store', path: '/franchise' },
     { id: 'sucursales', label: 'Sucursales', icon: 'fas fa-building', path: '/branches' },
-    { id: 'productos', label: 'Productos', icon: 'fas fa-box', path: '/products' }
+    { id: 'productos', label: 'Productos', icon: 'fas fa-box', path: '/products' },
+    { id: 'branch-products', label: 'Productos Sucursales', icon: 'fas fa-boxes', path: '/branch-products' },
   ];
 
   constructor(private router: Router) {}
